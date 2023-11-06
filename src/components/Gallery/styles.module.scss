@@ -1,0 +1,31 @@
+.gallery { 
+  position: relative;
+  &__item {
+    position: relative;
+
+  }
+  &__wrapper {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0.4;
+      background: red; 
+    }
+   
+  }
+  &__spinner {
+    z-index: 1; 
+    
+    // display: none;
+  }
+  &__show {
+    display: none;
+  }
+}
