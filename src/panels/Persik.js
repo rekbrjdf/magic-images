@@ -3,13 +3,13 @@ import PropTypes from 'prop-types';
 
 import { Panel, PanelHeader, PanelHeaderBack } from '@vkontakte/vkui';
 
-import persik from '../img/persik.png';
+// import persik from '../img/persik.png';
 import './Persik.css';
 
 const Persik = ({ id, go }) => (
   <Panel id={id}>
     <PanelHeader before={<PanelHeaderBack onClick={go} data-to="home" />}>Persik</PanelHeader>
-    <img className="Persik" src={persik} alt="Persik The Cat" />
+    <img className="Persik" alt="Persik The Cat" />
   </Panel>
 );
 

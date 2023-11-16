@@ -36,6 +36,8 @@ import {
   Icon28UserCircleOutline,
   Icon24Error,
 } from '@vkontakte/icons';
+import { Provider } from 'react-redux';
+// import { RouterProvider } from 'react-router-vkminiapps';
 import Gallery from './components/Gallery/index';
 import CreateAvatar from './panels/CreateAvatar/index';
 import CustomTabbar from './components/CustomTabbar';
@@ -43,6 +45,7 @@ import ShowSlides from './services/OnboardingService';
 // import imgSlide1 from './res/image/info-slider1.png';
 // import Home from './panels/Home';
 // import Persik from './panels/Persik';
+import store from './store';
 
 const ROUTES = {
   HOME: 'home',
@@ -167,132 +170,141 @@ const App = () => {
   // };
 
   return (
-    <ConfigProvider>
-      <AdaptivityProvider>
-        <AppRoot>
-          <SplitLayout
-            popout={popout}
-            header={hasHeader && <PanelHeader separator={false} />}
-            style={{ justifyContent: 'center' }}
-          >
-            {viewWidth.tabletPlus && (
-              <SplitCol className={viewWidth.tabletPlus.className} fixed width={280} maxWidth={280}>
-                <Panel>
-                  {hasHeader && <PanelHeader />}
-                  <Group>
-                    <Cell
-                      disabled={activeStory === 'services'}
-                      style={activeStory === 'services' ? activeStoryStyles : undefined}
-                      data-story="services"
-                      onClick={onStoryChange}
-                      before={<Icon28ServicesOutline />}
-                    >
-                      Мои аватары
-                    </Cell>
-                    <Cell
-                      disabled={activeStory === 'main'}
-                      style={activeStory === 'main' ? activeStoryStyles : undefined}
-                      data-story="main"
-                      onClick={onStoryChange}
-                      before={<Icon28MessageOutline />}
-                    >
-                      Создать аватар
-                    </Cell>
+    <Provider store={store}>
+      {/* <RouterProvider> */}
+      <ConfigProvider>
+        <AdaptivityProvider>
+          <AppRoot>
+            <SplitLayout
+              popout={popout}
+              header={hasHeader && <PanelHeader separator={false} />}
+              style={{ justifyContent: 'center' }}
+            >
+              {viewWidth.tabletPlus && (
+                <SplitCol
+                  className={viewWidth.tabletPlus.className}
+                  fixed
+                  width={280}
+                  maxWidth={280}
+                >
+                  <Panel>
+                    {hasHeader && <PanelHeader />}
+                    <Group>
+                      <Cell
+                        disabled={activeStory === 'services'}
+                        style={activeStory === 'services' ? activeStoryStyles : undefined}
+                        data-story="services"
+                        onClick={onStoryChange}
+                        before={<Icon28ServicesOutline />}
+                      >
+                        Мои аватары
+                      </Cell>
+                      <Cell
+                        disabled={activeStory === 'main'}
+                        style={activeStory === 'main' ? activeStoryStyles : undefined}
+                        data-story="main"
+                        onClick={onStoryChange}
+                        before={<Icon28MessageOutline />}
+                      >
+                        Создать аватар
+                      </Cell>
 
-                    <Cell
-                      disabled={activeStory === 'profile'}
-                      style={activeStory === 'profile' ? activeStoryStyles : undefined}
-                      data-story="profile"
-                      onClick={onStoryChange}
-                      before={<Icon28UserCircleOutline />}
-                    >
-                      Профиль
-                    </Cell>
-                  </Group>
-                </Panel>
+                      <Cell
+                        disabled={activeStory === 'profile'}
+                        style={activeStory === 'profile' ? activeStoryStyles : undefined}
+                        data-story="profile"
+                        onClick={onStoryChange}
+                        before={<Icon28UserCircleOutline />}
+                      >
+                        Профиль
+                      </Cell>
+                    </Group>
+                  </Panel>
+                </SplitCol>
+              )}
+
+              <SplitCol width="100%" maxWidth="560px" stretchedOnMobile autoSpaced>
+                <Epic
+                  activeStory={activeStory}
+                  tabbar={
+                    viewWidth.tabletMinus && (
+                      <CustomTabbar activeStory={activeStory} onStoryChange={onStoryChange} />
+                    )
+                  }
+                >
+                  <View id="services" activePanel="services">
+                    <Panel id="services">
+                      <PanelHeader before={<PanelHeaderBack />}>Мои аватары</PanelHeader>
+                      <Group style={{ height: '600px' }}>
+                        <Gallery />
+                      </Group>
+                    </Panel>
+                  </View>
+                  <View id="main" activePanel="main">
+                    <CreateAvatar id="main" />
+                  </View>
+
+                  <View id="profile" activePanel="profile">
+                    <Panel id="profile">
+                      <PanelHeader before={<PanelHeaderBack />}>Профиль</PanelHeader>
+                      <Group style={{ height: '600px' }}>
+                        {fetchedUser && (
+                          <>
+                            <Group>
+                              <Cell
+                                before={
+                                  fetchedUser.photo_200 ? (
+                                    <Avatar src={fetchedUser.photo_200} />
+                                  ) : null
+                                }
+                                subtitle={
+                                  fetchedUser.city && fetchedUser.city.title
+                                    ? fetchedUser.city.title
+                                    : ''
+                                }
+                              >
+                                {`${fetchedUser.first_name} ${fetchedUser.last_name}`}
+                              </Cell>
+                            </Group>
+                            <Group description="Уведомления о завершении генерации аватара">
+                              <SimpleCell Component="label" after={<Switch defaultChecked />}>
+                                Уведомления
+                              </SimpleCell>
+                            </Group>
+                            <Group mode="plain">
+                              <CardGrid size="l">
+                                <Card>
+                                  <Div>
+                                    <Title level="2" style={{ marginBottom: 0 }}>
+                                      15 токенов
+                                    </Title>
+                                  </Div>
+                                  <Div style={{ paddingTop: 0 }}>
+                                    <Text>
+                                      Бесплатно токены начисляются ежедневно за вход в приложение
+                                    </Text>
+                                  </Div>
+                                  <Div>
+                                    <Button stretched mode="primary" size="m">
+                                      Пополнить
+                                    </Button>
+                                  </Div>
+                                </Card>
+                              </CardGrid>
+                            </Group>
+                          </>
+                        )}
+                      </Group>
+                    </Panel>
+                  </View>
+                </Epic>
               </SplitCol>
-            )}
-
-            <SplitCol width="100%" maxWidth="560px" stretchedOnMobile autoSpaced>
-              <Epic
-                activeStory={activeStory}
-                tabbar={
-                  viewWidth.tabletMinus && (
-                    <CustomTabbar activeStory={activeStory} onStoryChange={onStoryChange} />
-                  )
-                }
-              >
-                <View id="services" activePanel="services">
-                  <Panel id="services">
-                    <PanelHeader before={<PanelHeaderBack />}>Мои аватары</PanelHeader>
-                    <Group style={{ height: '600px' }}>
-                      <Gallery />
-                    </Group>
-                  </Panel>
-                </View>
-                <View id="main" activePanel="main">
-                  <CreateAvatar id="main" />
-                </View>
-
-                <View id="profile" activePanel="profile">
-                  <Panel id="profile">
-                    <PanelHeader before={<PanelHeaderBack />}>Профиль</PanelHeader>
-                    <Group style={{ height: '600px' }}>
-                      {fetchedUser && (
-                        <>
-                          <Group>
-                            <Cell
-                              before={
-                                fetchedUser.photo_200 ? (
-                                  <Avatar src={fetchedUser.photo_200} />
-                                ) : null
-                              }
-                              subtitle={
-                                fetchedUser.city && fetchedUser.city.title
-                                  ? fetchedUser.city.title
-                                  : ''
-                              }
-                            >
-                              {`${fetchedUser.first_name} ${fetchedUser.last_name}`}
-                            </Cell>
-                          </Group>
-                          <Group description="Уведомления о завершении генерации аватара">
-                            <SimpleCell Component="label" after={<Switch defaultChecked />}>
-                              Уведомления
-                            </SimpleCell>
-                          </Group>
-                          <Group mode="plain">
-                            <CardGrid size="l">
-                              <Card>
-                                <Div>
-                                  <Title level="2" style={{ marginBottom: 0 }}>
-                                    15 токенов
-                                  </Title>
-                                </Div>
-                                <Div style={{ paddingTop: 0 }}>
-                                  <Text>
-                                    Бесплатно токены начисляются ежедневно за вход в приложение
-                                  </Text>
-                                </Div>
-                                <Div>
-                                  <Button stretched mode="primary" size="m">
-                                    Пополнить
-                                  </Button>
-                                </Div>
-                              </Card>
-                            </CardGrid>
-                          </Group>
-                        </>
-                      )}
-                    </Group>
-                  </Panel>
-                </View>
-              </Epic>
-            </SplitCol>
-          </SplitLayout>
-        </AppRoot>
-      </AdaptivityProvider>
-    </ConfigProvider>
+            </SplitLayout>
+          </AppRoot>
+        </AdaptivityProvider>
+      </ConfigProvider>
+      {/* </RouterProvider> */}
+    </Provider>
   );
 };
 
