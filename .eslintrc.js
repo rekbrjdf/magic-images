@@ -4,7 +4,13 @@ module.exports = {
     browser: true,
     node: true,
   },
-  extends: ['airbnb-base', 'airbnb/rules/react', 'plugin:jest/recommended', 'prettier'],
+  extends: [
+    'airbnb-base',
+    'airbnb/rules/react',
+    'plugin:react/recommended',
+    'plugin:jest/recommended',
+    'prettier',
+  ],
   plugins: ['babel', 'import', 'react', 'prettier'],
   parser: 'babel-eslint',
   parserOptions: {
@@ -28,6 +34,7 @@ module.exports = {
     'react/jsx-props-no-spreading': 'off',
     'no-underscore-dangle': 'off',
     'no-plusplus': 'off',
+    'no-unused-vars': 'off',
     'no-param-reassign': [
       'error',
       {

@@ -1,8 +1,7 @@
-.gallery { 
+.gallery {
   position: relative;
   &__item {
     position: relative;
-
   }
   &__wrapper {
     position: absolute;
@@ -14,15 +13,14 @@
     &::after {
       content: '';
       position: absolute;
-      inset: 0; 
+      inset: 0;
       opacity: 0.2;
-      background: rgb(0, 28, 61); 
+      background: rgb(0, 28, 61);
     }
-   
   }
   &__spinner {
-    z-index: 1; 
-    
+    z-index: 1;
+
     // display: none;
   }
   &__show {

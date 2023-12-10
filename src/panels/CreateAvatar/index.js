@@ -1,13 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   Div,
   Group,
-  Panel,
   Button,
-  PanelHeader,
   Link,
-  PanelHeaderBack,
   Header,
   HorizontalScroll,
   Image,
@@ -23,6 +20,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import Template from '../../components/Template/index';
 import classes from './styles.module.scss';
 import { set } from '../../store';
+
+// const apiUrl = "https://sonofleonid.ru/mini-app/api/upload";
+// const param =
+//   'vk_access_token_settings=&vk_app_id=51777387&vk_are_notifications_enabled=0&vk_is_app_user=1&vk_is_favorite=0&vk_language=ru&vk_platform=desktop_web&vk_ref=other&vk_ts=1701599146&vk_user_id=36039796&sign=zIJyvuNPxO1RNmilIvpihsgCqtHzb2vaEdokPdQAnt0';
+const param = window.location.search;
+console.log(param, 'param');
+
+const array = param.split('&');
+const queryParams = array.map((item) => {
+  const [key, value] = item.split('=');
+  return { key, value };
+});
 
 const CreateAvatar = ({ id }) => {
   const [overlay, setOverlay] = useState(false);
@@ -53,39 +62,64 @@ const CreateAvatar = ({ id }) => {
     setValuePhoto(e.target.files[0]);
   };
 
-  const uploadImage = async (file) => {
+  const uploadImage = async (e) => {
+    e.preventDefault();
+
     const formData = new FormData();
-    formData.append('file', file);
-    const response = await fetch('https://pics.seizure.icu/api/upload.php', {
+    formData.append('file', valuePhoto);
+
+    for (let i = 0; i < queryParams.length; i++) {
+      formData.append(queryParams[i].key, queryParams[i].value);
+    }
+
+    const response = await fetch(`https://sonofleonid.ru/mini-app/api/upload${param}`, {
       method: 'POST',
       body: formData,
     });
     const result = await response.json();
+    console.log(result, 'result33333333333');
     return result.url;
   };
+
+  const getImage = async () => {
+    const response = await fetch(`https://sonofleonid.ru/mini-app/${param}`);
+    const result = await response.json();
+    console.log(result, 'result1212');
+    return result.url;
+  };
+
+  const getListImage = async () => {
+    const response = await fetch(`https://sonofleonid.ru/mini-app/api/images${param}`);
+    const result = await response.json();
+    console.log(result, 'getListImage');
+    return result.url;
+  };
+
+  useEffect(() => {
+    getImage();
+    getListImage();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // if (!valueName || !valueLocation || !valueTime || !valueDescription) {
-    //   setError("Заполните все поля");
-    //   return;
-    // }
-
     setIsLoading(true);
     const imageSrc = await uploadImage(valuePhoto);
 
-    const response = await fetch('https://vknft.seizure.icu/create/event', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${mainStorage.accountToken}`,
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      'https://sonofleonid.ru/mini-app/api/upload?vk_access_token_settings=&vk_app_id=51780597&vk_are_notifications_enabled=0&vk_is_app_user=1&vk_is_favorite=0&vk_language=ru&vk_platform=desktop_web&vk_ref=other&vk_ts=1700580539&vk_user_id=155778911&sign=fdsfsdfsdgsdfhfhgdfhdfhdfhdfh',
+      {
+        method: 'POST',
+        // headers: {
+        //   Authorization: `Bearer ${mainStorage.accountToken}`,
+        //   'Content-Type': 'application/json',
+        // },
+        body: JSON.stringify({
+          image: imageSrc,
+          owner_id: mainStorage.user.id,
+        }),
       },
-      body: JSON.stringify({
-        image: imageSrc,
-        owner_id: mainStorage.user.id,
-      }),
-    });
+    );
 
     const result = await response.json();
 
@@ -101,10 +135,10 @@ const CreateAvatar = ({ id }) => {
     // router.toPanel(PanelTypes.PROFILE_HOME);
     setIsLoading(false);
   };
+  console.log(handleSubmit, 'handleSubmit');
 
   return (
-    <Panel id={id} className={classes.avatar}>
-      <PanelHeader before={<PanelHeaderBack />}>Создать аватары</PanelHeader>
+    <div className={classes.avatar}>
       <Group
         header={
           <Header size="large" aside={<Link>Показать все</Link>}>
@@ -120,7 +154,7 @@ const CreateAvatar = ({ id }) => {
       </Group>
       <Group header={<Header size="large">Выберите фото</Header>}>
         <Group>
-          <FormLayout onSubmit={handleSubmit}>
+          <FormLayout onSubmit={uploadImage}>
             {imageURI !== null && (
               <FormItem className={classes['avatar__wrapper-img']}>
                 <Div className={classes.avatar__close} onClick={deleteImage}>
@@ -169,7 +203,7 @@ const CreateAvatar = ({ id }) => {
         </Group>
         {isLoading && <ScreenSpinner />}
       </Group>
-    </Panel>
+    </div>
   );
 };
 
