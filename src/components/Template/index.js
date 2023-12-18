@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { HorizontalCell, Image } from '@vkontakte/vkui';
 
@@ -35,11 +35,26 @@ const items = [
   },
 ];
 
-const Template = () =>
-  items.map(({ id, title, price, image }) => (
-    <HorizontalCell key={id} size="l" header={title} subtitle={`${price} токенов`}>
+const Template = ({ onSelect }) => {
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleClick = (id) => {
+    setSelectedId(id === selectedId ? null : id);
+    onSelect(id);
+  };
+
+  return items.map(({ id, title, price, image }) => (
+    <HorizontalCell
+      key={id}
+      onClick={() => handleClick(id)}
+      size="l"
+      header={title}
+      subtitle={`${price} токенов`}
+      style={{ backgroundColor: selectedId === id ? '#f0f2f5' : 'transparent' }}
+    >
       <Image size={128} src={image} />
     </HorizontalCell>
   ));
+};
 
 export default Template;

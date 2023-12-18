@@ -33,11 +33,13 @@ const queryParams = array.map((item) => {
   return { key, value };
 });
 
-const CreateAvatar = ({ id }) => {
+const CreateAvatar = () => {
   const [overlay, setOverlay] = useState(false);
   const [valuePhoto, setValuePhoto] = useState();
   const [imageURI, setImageURI] = useState(null);
+  const [selectedCellId, setSelectedCellId] = useState(null);
 
+  console.log(selectedCellId, 'selectedCellId');
   const mainStorage = useSelector((state) => state.main);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
@@ -148,7 +150,7 @@ const CreateAvatar = ({ id }) => {
       >
         <HorizontalScroll>
           <div style={{ display: 'flex' }}>
-            <Template />
+            <Template onSelect={(id) => setSelectedCellId(id)} />
           </div>
         </HorizontalScroll>
       </Group>
