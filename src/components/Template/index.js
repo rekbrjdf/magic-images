@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-
-import { HorizontalCell, Image } from '@vkontakte/vkui';
+import { HorizontalCell, Image, useAppearance } from '@vkontakte/vkui';
 
 const items = [
   {
@@ -43,6 +42,10 @@ const Template = ({ onSelect }) => {
     onSelect(id);
   };
 
+  const appearance = useAppearance();
+  const colorForCell = appearance === 'dark' ? '#333333' : '#f0f2f5';
+  console.log(appearance, 'appearance');
+
   return items.map(({ id, title, price, image }) => (
     <HorizontalCell
       key={id}
@@ -50,7 +53,10 @@ const Template = ({ onSelect }) => {
       size="l"
       header={title}
       subtitle={`${price} токенов`}
-      style={{ backgroundColor: selectedId === id ? '#f0f2f5' : 'transparent' }}
+      style={{
+        borderRadius: '8px',
+        backgroundColor: selectedId === id ? colorForCell : 'transparent',
+      }}
     >
       <Image size={128} src={image} />
     </HorizontalCell>

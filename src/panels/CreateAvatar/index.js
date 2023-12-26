@@ -25,7 +25,6 @@ import { set } from '../../store';
 // const param =
 //   'vk_access_token_settings=&vk_app_id=51777387&vk_are_notifications_enabled=0&vk_is_app_user=1&vk_is_favorite=0&vk_language=ru&vk_platform=desktop_web&vk_ref=other&vk_ts=1701599146&vk_user_id=36039796&sign=zIJyvuNPxO1RNmilIvpihsgCqtHzb2vaEdokPdQAnt0';
 const param = window.location.search;
-console.log(param, 'param');
 
 const array = param.split('&');
 const queryParams = array.map((item) => {
@@ -86,7 +85,7 @@ const CreateAvatar = () => {
   const getImage = async () => {
     const response = await fetch(`https://sonofleonid.ru/mini-app/${param}`);
     const result = await response.json();
-    console.log(result, 'result1212');
+    console.log(result, 'result1211111111112');
     return result.url;
   };
 
@@ -141,13 +140,7 @@ const CreateAvatar = () => {
 
   return (
     <div className={classes.avatar}>
-      <Group
-        header={
-          <Header size="large" aside={<Link>Показать все</Link>}>
-            Выберите шаблон
-          </Header>
-        }
-      >
+      <Group header={<Header size="large">Выберите шаблон</Header>}>
         <HorizontalScroll>
           <div style={{ display: 'flex' }}>
             <Template onSelect={(id) => setSelectedCellId(id)} />
@@ -191,14 +184,14 @@ const CreateAvatar = () => {
                 </File>
               </FormItem>
             </FormLayoutGroup>
-            <FormItem>
+            {/* <FormItem>
               <Checkbox checked={overlay} onChange={(e) => setOverlay(e.target.checked)}>
                 Я принимаю пользовательское соглашение
               </Checkbox>
-            </FormItem>
+            </FormItem> */}
             <FormItem>
-              <Button stretched type="submit" mode="secondary" disabled={!overlay} size="m">
-                Сгенерировать аватар (10 токенов)
+              <Button stretched type="submit" mode="secondary" disabled={!imageURI} size="m">
+                Сгенерировать аватар
               </Button>
             </FormItem>
           </FormLayout>

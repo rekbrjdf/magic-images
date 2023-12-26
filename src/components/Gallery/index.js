@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   Div,
@@ -46,8 +46,24 @@ const items = [
   },
 ];
 
+const param = window.location.search;
+
 const Gallery = () => {
   const [popout, setPopout] = useState(true);
+  const [images, setImages] = useState([]);
+
+  const getListImage = async () => {
+    const response = await fetch(`https://sonofleonid.ru/mini-app/api/images${param}`);
+    const result = await response.json();
+    setImages(result);
+    console.log(result, 'getListImage11111111111111');
+    return result.url;
+  };
+
+  useEffect(() => {
+    getListImage();
+  }, []);
+  console.log(images, 'images');
 
   // const setCancelableScreenSpinner = () => {
   //   setPopout(<ScreenSpinner state="cancelable" onClick={clearPopout} />);
@@ -69,10 +85,10 @@ const Gallery = () => {
   //   </SplitLayout>
   // );
 
-  const item = items.map(({ id, image, done }) => (
+  const item = images.map(({ id, file }) => (
     <Div key={id} className={classes.gallery__item}>
       <Div style={{ width: '100%', height: 'auto' }}>
-        <img style={{ width: '350px', height: '100%' }} src={image} />
+        <img style={{ width: '350px', height: '100%' }} src={file} />
         {/* <Spinner size="large" style={{ margin: '20px 0' }} /> */}
       </Div>
       <Div>
@@ -85,7 +101,7 @@ const Gallery = () => {
           </Button>
         </ButtonGroup>
       </Div>
-      {done && (
+      {/* {done && (
         <Div className={cn(classes.gallery__wrapper, { [classes.gallery__show]: !popout })}>
           <PanelSpinner
             size="large"
@@ -94,7 +110,7 @@ const Gallery = () => {
             onClick={() => setPopout(!done)}
           />
         </Div>
-      )}
+      )} */}
 
       {/* {spinnerMain} */}
     </Div>

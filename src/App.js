@@ -200,7 +200,12 @@ const App = ({ router }) => {
               </SplitCol>
             )}
 
-            <SplitCol width="100%" maxWidth="560px" stretchedOnMobile autoSpaced>
+            <SplitCol
+              width="100%"
+              maxWidth="560px"
+              stretchedOnMobile
+              // autoSpaced
+            >
               <Epic
                 activeStory={router.activeView}
                 tabbar={viewWidth.tabletMinus && <CustomTabbar router={router} />}
@@ -250,7 +255,7 @@ const App = ({ router }) => {
                               Уведомления
                             </SimpleCell>
                           </Group>
-                          <Group mode="plain">
+                          {/* <Group mode="plain">
                             <CardGrid size="l">
                               <Card>
                                 <Div>
@@ -270,7 +275,7 @@ const App = ({ router }) => {
                                 </Div>
                               </Card>
                             </CardGrid>
-                          </Group>
+                          </Group> */}
                         </>
                       )}
                     </Group>
