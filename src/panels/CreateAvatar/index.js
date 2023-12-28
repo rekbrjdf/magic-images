@@ -36,7 +36,7 @@ const CreateAvatar = () => {
   const [overlay, setOverlay] = useState(false);
   const [valuePhoto, setValuePhoto] = useState();
   const [imageURI, setImageURI] = useState(null);
-  const [selectedCellId, setSelectedCellId] = useState(null);
+  const [selectedCellId, setSelectedCellId] = useState(1);
 
   console.log(selectedCellId, 'selectedCellId');
   const mainStorage = useSelector((state) => state.main);
@@ -73,10 +73,13 @@ const CreateAvatar = () => {
       formData.append(queryParams[i].key, queryParams[i].value);
     }
 
-    const response = await fetch(`https://sonofleonid.ru/mini-app/api/upload${param}`, {
-      method: 'POST',
-      body: formData,
-    });
+    const response = await fetch(
+      `https://sonofleonid.ru/mini-app/api/upload${param}&prompt_id=${selectedCellId}`,
+      {
+        method: 'POST',
+        body: formData,
+      },
+    );
     const result = await response.json();
     console.log(result, 'result33333333333');
     return result.url;
@@ -136,7 +139,6 @@ const CreateAvatar = () => {
     // router.toPanel(PanelTypes.PROFILE_HOME);
     setIsLoading(false);
   };
-  console.log(handleSubmit, 'handleSubmit');
 
   return (
     <div className={classes.avatar}>
