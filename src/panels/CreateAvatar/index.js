@@ -14,8 +14,10 @@ import {
   FormItem,
   File,
   ScreenSpinner,
+  Snackbar,
+  Avatar,
 } from '@vkontakte/vkui';
-import { Icon28AddOutline, Icon24Cancel } from '@vkontakte/icons';
+import { Icon28AddOutline, Icon24Cancel, Icon24Error } from '@vkontakte/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import Template from '../../components/Template/index';
 import classes from './styles.module.scss';
@@ -37,8 +39,8 @@ const CreateAvatar = () => {
   const [valuePhoto, setValuePhoto] = useState();
   const [imageURI, setImageURI] = useState(null);
   const [selectedCellId, setSelectedCellId] = useState(1);
+  const [snackbar, setSnackbar] = useState(null);
 
-  console.log(selectedCellId, 'selectedCellId');
   const mainStorage = useSelector((state) => state.main);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
@@ -73,16 +75,54 @@ const CreateAvatar = () => {
       formData.append(queryParams[i].key, queryParams[i].value);
     }
 
-    const response = await fetch(
-      `https://sonofleonid.ru/mini-app/api/upload${param}&prompt_id=${selectedCellId}`,
-      {
-        method: 'POST',
-        body: formData,
-      },
-    );
-    const result = await response.json();
-    console.log(result, 'result33333333333');
-    return result.url;
+    try {
+      const response = await fetch(
+        `https://sonofleonid.ru/mini-app/api/upload${param}&prompt_id=${selectedCellId}`,
+        {
+          method: 'POST',
+          body: formData,
+        },
+      );
+
+      if (response.status === 413) {
+        setSnackbar(
+          <Snackbar
+            layout="vertical"
+            onClose={() => setSnackbar(null)}
+            before={
+              <Avatar size={24} style={{ backgroundColor: 'red' }}>
+                <Icon24Error fill="#fff" width={14} height={14} />
+              </Avatar>
+            }
+            duration={900}
+          >
+            Проблема с получением данных из Storage
+          </Snackbar>,
+        );
+        throw new Error('Ошибка: Превышен максимальный размер файла.');
+      }
+
+      const result = await response.json();
+      console.log(result, 'result33333333333');
+      return result.url;
+    } catch (error) {
+      setSnackbar(
+        <Snackbar
+          layout="vertical"
+          onClose={() => setSnackbar(null)}
+          before={
+            <Avatar size={24} style={{ backgroundColor: 'red' }}>
+              <Icon24Error fill="#fff" width={14} height={14} />
+            </Avatar>
+          }
+          duration={900}
+        >
+          Проблема с получением данных из Storage
+        </Snackbar>,
+      );
+      console.log('Произошла ошибка при загрузке изображения:', error.message);
+    }
+    return '';
   };
 
   const getImage = async () => {

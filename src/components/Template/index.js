@@ -35,8 +35,9 @@ const items = [
 ];
 
 const Template = ({ onSelect }) => {
-  const [selectedId, setSelectedId] = useState(null);
+  const [selectedId, setSelectedId] = useState(1);
 
+  console.log(selectedId, 'selectedId');
   const handleClick = (id) => {
     setSelectedId(id === selectedId ? null : id);
     onSelect(id);

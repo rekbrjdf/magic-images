@@ -110,15 +110,15 @@ const Gallery = () => {
   // );
 
   const item = images.map(({ id, file }) => (
-    <Div key={id} className={classes.gallery__item}>
+    <Div key={id} style={{ width: '350px' }} className={classes.gallery__item}>
       <Div style={{ width: '100%', height: 'auto' }}>
         <img
-          style={{ width: '350px', height: '100%' }}
+          style={{ width: '350px', height: '100%', borderRadius: '8px' }}
           src={`https://sonofleonid.ru/mini-app/static/${file}${param}`}
         />
         {/* <Spinner size="large" style={{ margin: '20px 0' }} /> */}
       </Div>
-      <Div>
+      <Div style={{ width: '100%' }}>
         <ButtonGroup mode="horizontal" gap="m" stretched>
           <Button size="l" onClick={() => handleDownload(file)} appearance="accent" stretched>
             Скачать
