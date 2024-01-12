@@ -87,7 +87,7 @@ const Gallery = () => {
     getListImage();
     // getPhoto();
   }, []);
-  console.log(images, 'images');
+  // console.log(images, 'images');
 
   // const setCancelableScreenSpinner = () => {
   //   setPopout(<ScreenSpinner state="cancelable" onClick={clearPopout} />);
@@ -109,7 +109,7 @@ const Gallery = () => {
   //   </SplitLayout>
   // );
 
-  const item = images.map(({ id, file }) => (
+  const item = images.reverse().map(({ id, file }) => (
     <Div key={id} style={{ width: '350px' }} className={classes.gallery__item}>
       <Div style={{ width: '100%', height: 'auto' }}>
         <img

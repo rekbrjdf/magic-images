@@ -56,7 +56,7 @@ const App = ({ router }) => {
   console.log(snackbar, 'snackbar');
 
   const [fetchedState, setFetchedState] = useState(null);
-  console.log(fetchedState, 'fetchedState');
+  // console.log(fetchedState, 'fetchedState');
 
   const [popout, setPopout] = useState(<ScreenSpinner size="large" />);
 
@@ -215,7 +215,7 @@ const App = ({ router }) => {
                     <PanelHeader before={<PanelHeaderBack onClick={toBack} />}>
                       Мои аватары
                     </PanelHeader>
-                    <Group style={{ height: '600px' }}>
+                    <Group style={{ height: '700px' }}>
                       <Gallery />
                     </Group>
                   </Panel>
@@ -231,7 +231,7 @@ const App = ({ router }) => {
                 <View id={ViewTypes.PROFILE} activePanel={router.activePanel}>
                   <Panel id={PanelTypes.PROFILE}>
                     <PanelHeader before={<PanelHeaderBack onClick={toBack} />}>Профиль</PanelHeader>
-                    <Group style={{ height: '600px' }}>
+                    <Group style={{ height: '700px' }}>
                       {fetchedUser && (
                         <>
                           <Group>

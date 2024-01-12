@@ -37,7 +37,6 @@ const items = [
 const Template = ({ onSelect }) => {
   const [selectedId, setSelectedId] = useState(1);
 
-  console.log(selectedId, 'selectedId');
   const handleClick = (id) => {
     setSelectedId(id === selectedId ? null : id);
     onSelect(id);
@@ -45,7 +44,6 @@ const Template = ({ onSelect }) => {
 
   const appearance = useAppearance();
   const colorForCell = appearance === 'dark' ? '#333333' : '#f0f2f5';
-  console.log(appearance, 'appearance');
 
   return items.map(({ id, title, price, image }) => (
     <HorizontalCell

@@ -14,14 +14,18 @@ import {
   FormItem,
   File,
   ScreenSpinner,
+  PanelSpinner,
   Snackbar,
+  ModalCardBase,
   Avatar,
 } from '@vkontakte/vkui';
 import { Icon28AddOutline, Icon24Cancel, Icon24Error } from '@vkontakte/icons';
 import { useDispatch, useSelector } from 'react-redux';
+import { useRouterActions } from 'react-router-vkminiapps';
 import Template from '../../components/Template/index';
 import classes from './styles.module.scss';
-import { set } from '../../store';
+// import { set } from '../../store';
+import { ViewTypes, PanelTypes } from '../../routing/structure.ts';
 
 // const apiUrl = "https://sonofleonid.ru/mini-app/api/upload";
 // const param =
@@ -35,11 +39,14 @@ const queryParams = array.map((item) => {
 });
 
 const CreateAvatar = () => {
+  const { toView, toPanel } = useRouterActions();
   const [overlay, setOverlay] = useState(false);
   const [valuePhoto, setValuePhoto] = useState();
   const [imageURI, setImageURI] = useState(null);
   const [selectedCellId, setSelectedCellId] = useState(1);
   const [snackbar, setSnackbar] = useState(null);
+
+  console.log(snackbar, 'snackbar');
 
   const mainStorage = useSelector((state) => state.main);
   const dispatch = useDispatch();
@@ -68,6 +75,7 @@ const CreateAvatar = () => {
   const uploadImage = async (e) => {
     e.preventDefault();
 
+    setIsLoading(true);
     const formData = new FormData();
     formData.append('file', valuePhoto);
 
@@ -83,7 +91,7 @@ const CreateAvatar = () => {
           body: formData,
         },
       );
-
+      setIsLoading(false);
       if (response.status === 413) {
         setSnackbar(
           <Snackbar
@@ -99,43 +107,95 @@ const CreateAvatar = () => {
             Проблема с получением данных из Storage
           </Snackbar>,
         );
-        throw new Error('Ошибка: Превышен максимальный размер файла.');
+        return;
       }
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log(result, '!111111111111!!!!!!!!');
+        // setSnackbar(
+        //   <Snackbar
+        //     layout="vertical"
+        //     onClose={() => setSnackbar(null)}
+        //     before={
+        //       <Avatar size={24} style={{ backgroundColor: 'red' }}>
+        //         <Icon24Error fill="#fff" width={14} height={14} />
+        //       </Avatar>
+        //     }
+        //     duration={900}
+        //   >
+        //     Успех
+        //   </Snackbar>,
+        // );
+        setSnackbar(true);
+      } else {
+        setSnackbar(<span>Произошла ошибка при загрузке изображения.</span>);
+      }
+
+      // if (response.status === 413) {
+      //   setSnackbar(
+      //     <Snackbar
+      //       layout="vertical"
+      //       onClose={() => setSnackbar(null)}
+      //       before={
+      //         <Avatar size={24} style={{ backgroundColor: 'red' }}>
+      //           <Icon24Error fill="#fff" width={14} height={14} />
+      //         </Avatar>
+      //       }
+      //       duration={900}
+      //     >
+      //       Проблема с получением данных из Storage
+      //     </Snackbar>,
+      //   );
+      //   throw new Error('Ошибка: Превышен максимальный размер файла.');
+      // }
 
       const result = await response.json();
       console.log(result, 'result33333333333');
-      return result.url;
+      toView(ViewTypes.SERVICES);
+      // return result.url;
     } catch (error) {
-      setSnackbar(
-        <Snackbar
-          layout="vertical"
-          onClose={() => setSnackbar(null)}
-          before={
-            <Avatar size={24} style={{ backgroundColor: 'red' }}>
-              <Icon24Error fill="#fff" width={14} height={14} />
-            </Avatar>
-          }
-          duration={900}
-        >
-          Проблема с получением данных из Storage
-        </Snackbar>,
-      );
+      console.log('9999999999999999999999999999', error.message);
+      // setSnackbar(
+      //   <Snackbar
+      //     layout="vertical"
+      //     onClose={() => setSnackbar(null)}
+      //     before={
+      //       <Avatar size={24} style={{ backgroundColor: 'red' }}>
+      //         <Icon24Error fill="#fff" width={14} height={14} />
+      //       </Avatar>
+      //     }
+      //     duration={900}
+      //   >
+      //     Проблема с получением данных из Storage
+      //   </Snackbar>,
+      // );
+      setSnackbar(true);
+      <ModalCardBase
+        dismissButtonMode="inside"
+        style={{ width: 450, marginBottom: 20 }}
+        header="Десктопная и планшетная версии с крестиком внутри"
+        subheader="Сверху будет безопасный отступ до иконки"
+      />;
+      setIsLoading(false);
+      toView(ViewTypes.SERVICES);
+      toPanel(PanelTypes.SERVICES);
       console.log('Произошла ошибка при загрузке изображения:', error.message);
     }
-    return '';
+    // return '';
   };
 
   const getImage = async () => {
     const response = await fetch(`https://sonofleonid.ru/mini-app/${param}`);
     const result = await response.json();
-    console.log(result, 'result1211111111112');
+    // console.log(result, 'result1211111111112');
     return result.url;
   };
 
   const getListImage = async () => {
     const response = await fetch(`https://sonofleonid.ru/mini-app/api/images${param}`);
     const result = await response.json();
-    console.log(result, 'getListImage');
+    // console.log(result, 'getListImage');
     return result.url;
   };
 
@@ -143,42 +203,6 @@ const CreateAvatar = () => {
     getImage();
     getListImage();
   }, []);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    setIsLoading(true);
-    const imageSrc = await uploadImage(valuePhoto);
-
-    const response = await fetch(
-      'https://sonofleonid.ru/mini-app/api/upload?vk_access_token_settings=&vk_app_id=51780597&vk_are_notifications_enabled=0&vk_is_app_user=1&vk_is_favorite=0&vk_language=ru&vk_platform=desktop_web&vk_ref=other&vk_ts=1700580539&vk_user_id=155778911&sign=fdsfsdfsdgsdfhfhgdfhdfhdfhdfh',
-      {
-        method: 'POST',
-        // headers: {
-        //   Authorization: `Bearer ${mainStorage.accountToken}`,
-        //   'Content-Type': 'application/json',
-        // },
-        body: JSON.stringify({
-          image: imageSrc,
-          owner_id: mainStorage.user.id,
-        }),
-      },
-    );
-
-    const result = await response.json();
-
-    if (result.event_id) {
-      dispatch(
-        set({
-          profilePanelEventId: result.event_id,
-        }),
-      );
-      // router.toPanel(PanelTypes.PROFILE_NEW_TICKET);
-    }
-
-    // router.toPanel(PanelTypes.PROFILE_HOME);
-    setIsLoading(false);
-  };
 
   return (
     <div className={classes.avatar}>
@@ -208,6 +232,15 @@ const CreateAvatar = () => {
                 />
               </FormItem>
             )}
+            {/* {snackbar && (
+              <ModalCardBase
+                onClose={() => setSnackbar(false)}
+                dismissButtonMode="inside"
+                style={{ width: 450, marginBottom: 20 }}
+                header="Десктопная и планшетная версии с крестиком внутри"
+                subheader="Сверху будет безопасный отступ до иконки"
+              />
+            )} */}
             <FormLayoutGroup mode="horizontal">
               <FormItem>
                 <File
@@ -238,7 +271,16 @@ const CreateAvatar = () => {
             </FormItem>
           </FormLayout>
         </Group>
-        {isLoading && <ScreenSpinner />}
+        {isLoading && (
+          <ModalCardBase
+            icon={<PanelSpinner>Панель загружается, пожалуйста, подождите...</PanelSpinner>}
+            onClose={() => setSnackbar(false)}
+            dismissButtonMode="none"
+            style={{ width: 450, height: 100, margin: 'auto', position: 'absolute', inset: 0 }}
+            // header="Десктопная и планшетная версии с крестиком внутри"
+            subheader="Приложению нужно время, чтобы сгенерировать изображение. Подождите около минуты"
+          />
+        )}
       </Group>
     </div>
   );

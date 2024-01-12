@@ -25,11 +25,11 @@ const CustomTabbar = ({ router }) => {
         selected={router.activeView === ViewTypes.SERVICES}
         data-story="services"
         text="Мои аватары"
-        indicator={
-          <Counter size="s" mode="prominent">
-            3
-          </Counter>
-        }
+        // indicator={
+        //   <Counter size="s" mode="prominent">
+        //     3
+        //   </Counter>
+        // }
       >
         <Icon28ServicesOutline />
       </TabbarItem>
