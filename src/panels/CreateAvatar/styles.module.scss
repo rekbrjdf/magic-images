@@ -32,6 +32,18 @@
     border-radius: 10px;
     overflow: hidden;
   }
+
+  &__modal {
+    max-width: 450px;
+    height: 145px; 
+    margin: auto; 
+    position: absolute; 
+    inset: 0;
+  }
+
+  &__content {
+    text-align: center;
+  }
 }
 
 :global(.vkuiButton__before:not(:last-child) + .vkuiButton__content) {

@@ -72,12 +72,12 @@ const Gallery = () => {
         },
       );
       const result = await response.json();
-      console.log(result);
+
       if (result.message === 'Успешное удаление') {
-        // Фильтруем список изображений, убирая удаленное изображение по его ID
         const updatedImages = images.filter((img) => img.id !== imageId);
         setImages(updatedImages);
       }
+      getListImage();
     } catch (error) {
       console.error('Ошибка при удалении изображения:', error);
     }
@@ -127,9 +127,6 @@ const Gallery = () => {
           <IconButton onClick={() => handleDelete(id)}>
             <Icon16Delete />
           </IconButton>
-          {/* <Button size="l" appearance="accent" stretched>
-            Еще
-          </Button> */}
         </ButtonGroup>
       </Div>
       {/* {done && (

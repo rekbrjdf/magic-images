@@ -53,7 +53,8 @@ const App = ({ router }) => {
   const [fetchedUser, setUser] = useState(null);
 
   const [snackbar, setSnackbar] = useState(null);
-  console.log(snackbar, 'snackbar');
+
+  const [isNotific, setNotific] = useState();
 
   const [fetchedState, setFetchedState] = useState(null);
   // console.log(fetchedState, 'fetchedState');
@@ -82,8 +83,47 @@ const App = ({ router }) => {
     return isShowed;
   }
 
+  const setNotification = () => {
+    bridge
+      .send('VKWebAppAllowNotifications')
+      .then((data) => {
+        if (data.result) {
+          console.log(data.result, 'data.result');
+          setNotific(data.result);
+        } else {
+          // Ошибка
+        }
+      })
+      .catch((error) => {
+        // Ошибка
+        console.log(error);
+      });
+  };
+
   useEffect(() => {
     bridge.send('VKWebAppInit');
+    bridge
+      .send('VKWebAppGetLaunchParams')
+      .then((data) => {
+        if (data) {
+          console.log(data, 'data ');
+          console.log(data.vk_are_notifications_enabled, 'data.vk_are_notifications_enabled');
+
+          if (data.vk_are_notifications_enabled === 1) {
+            setNotific(true);
+            console.log(true, 'true');
+          } else {
+            setNotific(false);
+            console.log(false, 'false');
+          }
+        } else {
+          // Ошибка
+        }
+      })
+      .catch((error) => {
+        // Ошибка
+        console.log(error);
+      });
 
     bridge.isWebView();
     isShowedSlidesSheet().then((isShowed) => {
@@ -101,9 +141,13 @@ const App = ({ router }) => {
         schemeAttribute.value = data.scheme ? data.scheme : 'client_light';
         document.body.attributes.setNamedItem(schemeAttribute);
       }
+      console.log(type, 'type');
     });
+
     async function fetchData() {
       const user = await bridge.send('VKWebAppGetUserInfo');
+      // const user1231 = await bridge.send('VKWebAppAllowNotificationsResult');
+      // console.log(user1231, 'user1231');
       const sheetState = await bridge.send('VKWebAppStorageGet', {
         keys: [STORAGE_KEYS.STATE, STORAGE_KEYS.STATUS],
       });
@@ -251,7 +295,15 @@ const App = ({ router }) => {
                             </Cell>
                           </Group>
                           <Group description="Уведомления о завершении генерации аватара">
-                            <SimpleCell Component="label" after={<Switch defaultChecked />}>
+                            <SimpleCell
+                              Component="label"
+                              after={
+                                <Switch
+                                  defaultChecked={isNotific}
+                                  onChange={() => setNotification()}
+                                />
+                              }
+                            >
                               Уведомления
                             </SimpleCell>
                           </Group>
