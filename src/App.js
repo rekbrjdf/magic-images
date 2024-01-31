@@ -45,6 +45,7 @@ import ShowSlides from './services/OnboardingService';
 const STORAGE_KEYS = {
   STATE: 'state',
   STATUS: 'viewStatus',
+  NOTIFICATION: 'isNotific',
 };
 
 const App = ({ router }) => {
@@ -55,9 +56,7 @@ const App = ({ router }) => {
   const [snackbar, setSnackbar] = useState(null);
 
   const [isNotific, setNotific] = useState();
-
   const [fetchedState, setFetchedState] = useState(null);
-  // console.log(fetchedState, 'fetchedState');
 
   const [popout, setPopout] = useState(<ScreenSpinner size="large" />);
 
@@ -69,69 +68,99 @@ const App = ({ router }) => {
   };
   const hasHeader = platform !== Platform.VKCOM;
 
-  const onboardingShowedKey = 'onboarding_showed';
+  useEffect(() => {
+    async function fetchNotificationSetting() {
+      const storageData = await bridge.send('VKWebAppStorageGet', {
+        keys: [STORAGE_KEYS.NOTIFICATION],
+      });
+      const storedValue = storageData.keys[0]?.value;
+      if (storedValue !== undefined) {
+        setNotific(storedValue === '1');
+      } else {
+        setNotific(false);
+      }
+    }
 
-  async function isShowedSlidesSheet() {
-    const data = await bridge.send('VKWebAppStorageGet', {
-      keys: [onboardingShowedKey],
-    });
-
-    const isShowed = data.keys.some(
-      ({ key, value }) => key === onboardingShowedKey && value === '1',
-    );
-
-    return isShowed;
-  }
+    fetchNotificationSetting();
+  }, []);
 
   const setNotification = () => {
-    bridge
-      .send('VKWebAppAllowNotifications')
-      .then((data) => {
-        if (data.result) {
-          console.log(data.result, 'data.result');
-          setNotific(data.result);
-        } else {
+    if (!isNotific) {
+      bridge
+        .send('VKWebAppAllowNotifications')
+        .then((data) => {
+          if (data.result) {
+            // Успешно включены уведомления
+            bridge.send('VKWebAppStorageSet', {
+              key: STORAGE_KEYS.NOTIFICATION,
+              value: '1',
+            });
+          } else {
+            // Ошибка
+          }
+        })
+        .catch((error) => {
           // Ошибка
-        }
-      })
-      .catch((error) => {
-        // Ошибка
-        console.log(error);
-      });
+          console.log(error);
+        });
+    } else {
+      bridge
+        .send('VKWebAppDenyNotifications')
+        .then((data) => {
+          if (data.result) {
+            // Успешно отключены уведомления
+            bridge.send('VKWebAppStorageSet', {
+              key: STORAGE_KEYS.NOTIFICATION,
+              value: '0',
+            });
+          } else {
+            // Ошибка
+          }
+        })
+        .catch((error) => {
+          // Ошибка
+          console.log(error);
+        });
+    }
+  };
+
+  const switchHandler = (evant) => {
+    setNotific(evant.currentTarget.checked);
+    setNotification();
   };
 
   useEffect(() => {
     bridge.send('VKWebAppInit');
-    bridge
-      .send('VKWebAppGetLaunchParams')
-      .then((data) => {
-        if (data) {
-          console.log(data, 'data ');
-          console.log(data.vk_are_notifications_enabled, 'data.vk_are_notifications_enabled');
+    // bridge
+    //   .send('VKWebAppGetLaunchParams')
+    //   .then((data) => {
+    //     if (data) {
+    //       console.log(data, 'data11111111111111111 ');
+    //       console.log(data.vk_are_notifications_enabled, 'data.vk_are_notifications_enabled');
 
-          if (data.vk_are_notifications_enabled === 1) {
-            setNotific(true);
-            console.log(true, 'true');
-          } else {
-            setNotific(false);
-            console.log(false, 'false');
-          }
-        } else {
-          // Ошибка
-        }
-      })
-      .catch((error) => {
-        // Ошибка
-        console.log(error);
-      });
+    //       if (data.vk_are_notifications_enabled === 1) {
+    //         setNotific(true);
+    //         console.log(true, 'setNotific true');
+    //       } else {
+    //         setNotific(false);
+    //         console.log(false, 'setNotific false');
+    //       }
+    //     } else {
+    //       // Ошибка
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     // Ошибка
+    //     console.log(error);
+    //   });
 
     bridge.isWebView();
-    isShowedSlidesSheet().then((isShowed) => {
-      if (!isShowed) {
-        console.log('Пользователь еще не видел онбординг');
-        ShowSlides();
-      }
-    });
+    // isShowedSlidesSheet().then((isShowed) => {
+    //   if (!isShowed) {
+    //     console.log('Пользователь еще не видел онбординг');
+    //     ShowSlides();
+    //   }
+    // });
   }, []);
 
   useEffect(() => {
@@ -141,7 +170,8 @@ const App = ({ router }) => {
         schemeAttribute.value = data.scheme ? data.scheme : 'client_light';
         document.body.attributes.setNamedItem(schemeAttribute);
       }
-      console.log(type, 'type');
+      // console.log(type, 'type');
+      // console.log(data, 'data');
     });
 
     async function fetchData() {
@@ -156,6 +186,7 @@ const App = ({ router }) => {
         sheetState.keys.forEach(({ key, value }) => {
           try {
             data[key] = value ? JSON.parse(value) : {};
+
             switch (key) {
               case STORAGE_KEYS.STATE:
                 setFetchedState(data[STORAGE_KEYS.STATE]);
@@ -297,12 +328,7 @@ const App = ({ router }) => {
                           <Group description="Уведомления о завершении генерации аватара">
                             <SimpleCell
                               Component="label"
-                              after={
-                                <Switch
-                                  defaultChecked={isNotific}
-                                  onChange={() => setNotification()}
-                                />
-                              }
+                              after={<Switch defaultChecked={isNotific} onChange={switchHandler} />}
                             >
                               Уведомления
                             </SimpleCell>

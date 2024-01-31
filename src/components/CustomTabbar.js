@@ -38,7 +38,7 @@ const CustomTabbar = ({ router }) => {
         onClick={() => toView(ViewTypes.PROFILE)}
         selected={router.activeView === ViewTypes.PROFILE}
         data-story="profile"
-        indicator={<Badge mode="prominent" />}
+        // indicator={<Badge mode="prominent" />}
         text="Профиль"
       >
         <Icon28UserCircleOutline />

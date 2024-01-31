@@ -78,7 +78,6 @@ const CreateAvatar = () => {
 
   const onFileUpload = (e) => {
     const selectedFile = e.target.files[0];
-    console.log(selectedFile, 'selectedFile');
     if (selectedFile) {
       const fileSizeInMB = selectedFile.size / (1024 * 1024); // Размер в мегабайтах
 
@@ -98,7 +97,6 @@ const CreateAvatar = () => {
         // Файл прошел проверку размера и формата
         if (selectedFile !== previousFile) {
           readURI(e);
-          console.log(selectedFile, 'Выбранный файл');
           setValuePhoto(selectedFile);
           setPreviousFile(selectedFile);
         }
@@ -180,14 +178,12 @@ const CreateAvatar = () => {
   const getImage = async () => {
     const response = await fetch(`https://sonofleonid.ru/mini-app/${param}`);
     const result = await response.json();
-    // console.log(result, 'result1211111111112');
     return result.url;
   };
 
   const getListImage = async () => {
     const response = await fetch(`https://sonofleonid.ru/mini-app/api/images${param}`);
     const result = await response.json();
-    // console.log(result, 'getListImage');
     return result.url;
   };
 
