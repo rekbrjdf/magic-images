@@ -1,36 +1,41 @@
 import React, { useState } from 'react';
 import { HorizontalCell, Image, useAppearance } from '@vkontakte/vkui';
+import imgNaruto from '../../res/image/logo_naruto.png';
+import imgHh from '../../res/image/logo_hh.png';
+import imgOp from '../../res/image/logo_op.png';
+import imgArcane from '../../res/image/logo_arcane.png';
+import imgCyberpunk from '../../res/image/logo_cyberpunk.png';
 
 const items = [
   {
     id: 1,
-    title: 'Команда <3',
+    title: 'Наруто',
     price: 4,
-    image: 'https://sun9-33.userapi.com/ODk8khvW97c6aSx_MxHXhok5byDCsHEoU-3BwA/sO-lGf_NjN4.jpg',
+    image: imgNaruto,
   },
   {
     id: 2,
-    title: 'Зингер',
+    title: 'Hunter × Hunter',
     price: 22,
-    image: 'https://sun9-60.userapi.com/bjwt581hETPAp4oY92bDcRvMymyfCaEsnojaUA/_KWQfS-MAd4.jpg',
+    image: imgHh,
   },
   {
     id: 3,
-    title: 'Медиагалерея ВКонтакте',
+    title: 'One Piece',
     price: 64,
-    image: 'https://sun9-26.userapi.com/YZ5-1A6cVgL7g1opJGQIWg1Bl5ynfPi8p41SkQ/IYIUDqGkkBE.jpg',
+    image: imgOp,
   },
   {
     id: 4,
-    title: 'Медиагалерея ВКонтакте',
+    title: 'Аркейн',
     price: 64,
-    image: 'https://sun9-26.userapi.com/YZ5-1A6cVgL7g1opJGQIWg1Bl5ynfPi8p41SkQ/IYIUDqGkkBE.jpg',
+    image: imgArcane,
   },
   {
     id: 5,
-    title: 'Медиагалерея ВКонтакте',
+    title: 'Киберпанк',
     price: 64,
-    image: 'https://sun9-26.userapi.com/YZ5-1A6cVgL7g1opJGQIWg1Bl5ynfPi8p41SkQ/IYIUDqGkkBE.jpg',
+    image: imgCyberpunk,
   },
 ];
 
@@ -51,7 +56,7 @@ const Template = ({ onSelect }) => {
       onClick={() => handleClick(id)}
       size="l"
       header={title}
-      subtitle={`${price} токенов`}
+      // subtitle={`${price} токенов`}
       style={{
         borderRadius: '8px',
         backgroundColor: selectedId === id ? colorForCell : 'transparent',
