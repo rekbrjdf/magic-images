@@ -6,6 +6,7 @@
   --vkui--size_button_base_medium_padding_horizontal_icon--regular: 0;
 
   position: relative;
+
   &__file {
   }
 
@@ -14,30 +15,31 @@
   }
 
   &__wrapper-img {
-    display: inline-block;
     position: relative;
+    display: inline-block;
 
     &:hover {
       .avatar__close {
+        position: absolute;
         display: flex;
         align-items: center;
         justify-content: center;
-        position: absolute;
-        inset: 0;
         cursor: pointer;
+        inset: 0;
       }
     }
   }
+
   &__img {
-    border-radius: 10px;
     overflow: hidden;
+    border-radius: 10px;
   }
 
   &__modal {
+    position: absolute;
     max-width: 450px;
-    height: 145px; 
-    margin: auto; 
-    position: absolute; 
+    height: 145px;
+    margin: auto;
     inset: 0;
   }
 

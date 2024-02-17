@@ -1,38 +1,22 @@
 import React, { useState, useEffect } from 'react';
-
-import {
-  Div,
-  // Group,
-  // Panel,
-  // Header,
-  ButtonGroup,
-  Button,
-  IconButton,
-  // SplitLayout,
-  // SplitCol,
-  // View,
-  // CellButton,
-  PanelSpinner,
-  // ScreenSpinner,
-} from '@vkontakte/vkui';
+import { useDispatch, useSelector } from 'react-redux';
+import { Div, ButtonGroup, Button, IconButton, PanelSpinner, Spinner } from '@vkontakte/vkui';
 import { Icon16Delete } from '@vkontakte/icons';
-import cn from 'classnames';
-import image1 from '../../res/image/gallery.jpg';
+import { fetchImages, deleteImage } from '../../redux/reducers/imagesSlice'; // Подставьте путь к вашим actions
 import classes from './styles.module.scss';
 
 const param = window.location.search;
 
 const Gallery = () => {
-  const [popout, setPopout] = useState(true);
-  const [images, setImages] = useState([]);
+  const dispatch = useDispatch();
+  const { images, loading } = useSelector((state) => state.images);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
-  const getListImage = async () => {
-    const response = await fetch(`https://sonofleonid.ru/mini-app/api/images${param}`);
-    const result = await response.json();
-    setImages(result);
-    console.log(result, 'getListImage11111111111111');
-    return result.url;
-  };
+  useEffect(() => {
+    dispatch(fetchImages()); // Запрос на загрузку изображений при монтировании компонента
+  }, [dispatch]);
+
+  console.log(images, 'images');
 
   const handleDownload = async (fileName) => {
     try {
@@ -52,99 +36,67 @@ const Gallery = () => {
     }
   };
 
-  // const getPhoto = async () => {
-  //   const photo = '2f9fc7e0-91b1-42e5-9f04-ce5998af294a.png';
-  //   const response = await fetch(
-  //     `https://sonofleonid.ru/mini-app/static/2f9fc7e0-91b1-42e5-9f04-ce5998af294a.png${param}`,
-  //   );
-  //   const result = await response.json();
-
-  //   console.log(result, 'getPhotogetPhotogetPhoto');
-  //   return result.url;
-  // };
-
   const handleDelete = async (imageId) => {
-    try {
-      const response = await fetch(
-        `https://sonofleonid.ru/mini-app/api/delete${param}&image_id=${imageId}`,
-        {
-          method: 'DELETE',
-        },
-      );
-      const result = await response.json();
-
-      if (result.message === 'Успешное удаление') {
-        const updatedImages = images.filter((img) => img.id !== imageId);
-        setImages(updatedImages);
-      }
-      getListImage();
-    } catch (error) {
-      console.error('Ошибка при удалении изображения:', error);
-    }
+    dispatch(deleteImage(imageId)); // Удаление изображения через Redux action
   };
 
-  useEffect(() => {
-    getListImage();
-    // getPhoto();
-  }, []);
-  // console.log(images, 'images');
+  const handleImageLoad = () => {
+    setImageLoaded(true); // Устанавливаем состояние загрузки картинки в true после ее загрузки
+  };
 
-  // const setCancelableScreenSpinner = () => {
-  //   setPopout(<ScreenSpinner state="cancelable" onClick={clearPopout} />);
-  // };
+  if (loading) {
+    return <PanelSpinner size="large" className={classes.gallery__spinner} state="cancelable" />;
+  }
 
-  // const spinnerMain = (
-  //   <SplitLayout popout={popout} aria-live="polite" aria-busy={!!popout}>
-  //     <SplitCol>
-  //       <View activePanel="spinner">
-  //         <Panel id="spinner">
-  //           <Group>
-  //             <CellButton onClick={setCancelableScreenSpinner}>
-  //               Запустить отменяемый процесс
-  //             </CellButton>
-  //           </Group>
-  //         </Panel>
-  //       </View>
-  //     </SplitCol>
-  //   </SplitLayout>
-  // );
+  return (
+    <div className={classes.gallery}>
+      {images.map(({ id, file }) => {
+        const cart = `https://sonofleonid.ru/mini-app/static/${file}${param}`;
 
-  const item = images.reverse().map(({ id, file }) => (
-    <Div key={id} style={{ width: '350px' }} className={classes.gallery__item}>
-      <Div style={{ width: '100%', height: 'auto' }}>
-        <img
-          style={{ width: '350px', height: '100%', borderRadius: '8px' }}
-          src={`https://sonofleonid.ru/mini-app/static/${file}${param}`}
-        />
-        {/* <Spinner size="large" style={{ margin: '20px 0' }} /> */}
-      </Div>
-      <Div style={{ width: '100%' }}>
-        <ButtonGroup mode="horizontal" gap="m" stretched>
-          <Button size="l" onClick={() => handleDownload(file)} appearance="accent" stretched>
-            Скачать
-          </Button>
+        return (
+          <Div key={id} style={{ width: '350px' }} className={classes.gallery__item}>
+            <div
+              style={{
+                width: '350px',
+                height: '350px',
+                backgroundImage: `url('https://sonofleonid.ru/mini-app/static/${file}${param}')`,
+                backgroundSize: 'contain',
+                backgroundRepeat: 'no-repeat',
+                backgroundPosition: 'center center',
+                borderRadius: '8px',
+                backgroundColor: '#ffffff',
+              }}
+            />
+            {/* <Div style={{ width: '100%', height: 'auto' }}>
 
-          <IconButton onClick={() => handleDelete(id)}>
-            <Icon16Delete />
-          </IconButton>
-        </ButtonGroup>
-      </Div>
-      {/* {done && (
-        <Div className={cn(classes.gallery__wrapper, { [classes.gallery__show]: !popout })}>
-          <PanelSpinner
-            size="large"
-            className={classes.gallery__spinner}
-            state="cancelable"
-            onClick={() => setPopout(!done)}
-          />
-        </Div>
-      )} */}
+              {imageLoaded ? ( // Показываем картинку только после ее полной загрузки
+                <img
+                  style={{ width: '350px', height: '100%', borderRadius: '8px' }}
+                  src={cart}
+                  alt={`Image ${id}`}
+                  onLoad={handleImageLoad}
+                />
+              ) : (
+                <Spinner size="large" style={{ margin: '20px 0' }} />
+              )}
+            </Div> */}
 
-      {/* {spinnerMain} */}
-    </Div>
-  ));
+            <Div style={{ width: '100%' }}>
+              <ButtonGroup mode="horizontal" gap="m" stretched>
+                <Button size="l" onClick={() => handleDownload(file)} appearance="accent" stretched>
+                  Скачать
+                </Button>
 
-  return <div className={classes.gallery}>{item}</div>;
+                <IconButton onClick={() => handleDelete(id)}>
+                  <Icon16Delete />
+                </IconButton>
+              </ButtonGroup>
+            </Div>
+          </Div>
+        );
+      })}
+    </div>
+  );
 };
 
 export default Gallery;

@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import { RouterProvider } from 'react-router-vkminiapps';
 import structure from './routing/structure.ts';
 import App from './App';
-import store from './store';
+import store from './redux/store';
 
 // Init VK Mini App
 bridge.send('VKWebAppInit');
