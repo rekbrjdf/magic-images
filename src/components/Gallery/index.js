@@ -64,7 +64,7 @@ const Gallery = () => {
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center center',
                 borderRadius: '8px',
-                backgroundColor: '#ffffff',
+                backgroundColor: 'transparent',
               }}
             />
             {/* <Div style={{ width: '100%', height: 'auto' }}>

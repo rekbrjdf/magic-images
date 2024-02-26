@@ -20,7 +20,7 @@ const items = [
     image: imgHh,
   },
   {
-    id: 3,
+    id: 6,
     title: 'One Piece',
     price: 64,
     image: imgOp,
