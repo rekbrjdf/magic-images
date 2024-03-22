@@ -37,7 +37,13 @@ const Gallery = () => {
   };
 
   const handleDelete = async (imageId) => {
-    dispatch(deleteImage(imageId)); // Удаление изображения через Redux action
+    try {
+      await dispatch(deleteImage(imageId));
+      // После успешного удаления вызываем fetchImages() для обновления списка изображений
+      dispatch(fetchImages());
+    } catch (error) {
+      console.error('Ошибка при удалении изображения:', error);
+    }
   };
 
   const handleImageLoad = () => {
