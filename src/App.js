@@ -70,57 +70,38 @@ const App = ({ router }) => {
 
   useEffect(() => {
     async function fetchNotificationSetting() {
-      const storageData = await bridge.send('VKWebAppStorageGet', {
-        keys: [STORAGE_KEYS.NOTIFICATION],
-      });
-      const storedValue = storageData.keys[0]?.value;
-      if (storedValue !== undefined) {
+      try {
+        const storageData = await bridge.send('VKWebAppStorageGet', {
+          keys: [STORAGE_KEYS.NOTIFICATION],
+        });
+        console.log('storageData', storageData);
+        const storedValue = storageData.keys[0]?.value;
         setNotific(storedValue === '1');
-      } else {
-        setNotific(false);
+      } catch (error) {
+        console.error('Error fetching notification setting:', error);
       }
     }
 
     fetchNotificationSetting();
   }, []);
 
-  const setNotification = () => {
-    if (!isNotific) {
-      bridge
-        .send('VKWebAppAllowNotifications')
-        .then((data) => {
-          if (data.result) {
-            // Успешно включены уведомления
-            bridge.send('VKWebAppStorageSet', {
-              key: STORAGE_KEYS.NOTIFICATION,
-              value: '1',
-            });
-          } else {
-            // Ошибка
-          }
-        })
-        .catch((error) => {
-          // Ошибка
-          console.log(error);
+  const setNotification = async () => {
+    try {
+      const newValue = isNotific ? '0' : '1';
+      const setResult = await bridge.send(
+        isNotific ? 'VKWebAppDenyNotifications' : 'VKWebAppAllowNotifications',
+      );
+      if (setResult.result) {
+        await bridge.send('VKWebAppStorageSet', {
+          key: STORAGE_KEYS.NOTIFICATION,
+          value: newValue,
         });
-    } else {
-      bridge
-        .send('VKWebAppDenyNotifications')
-        .then((data) => {
-          if (data.result) {
-            // Успешно отключены уведомления
-            bridge.send('VKWebAppStorageSet', {
-              key: STORAGE_KEYS.NOTIFICATION,
-              value: '0',
-            });
-          } else {
-            // Ошибка
-          }
-        })
-        .catch((error) => {
-          // Ошибка
-          console.log(error);
-        });
+        setNotific(!isNotific);
+      } else {
+        console.error('Error setting notification:', setResult.error_data);
+      }
+    } catch (error) {
+      console.error('Error setting notification:', error);
     }
   };
 

@@ -33,9 +33,6 @@ import classes from './styles.module.scss';
 // import { set } from '../../store';
 import { ViewTypes, PanelTypes } from '../../routing/structure.ts';
 
-// const apiUrl = "https://sonofleonid.ru/mini-app/api/upload";
-// const param =
-//   'vk_access_token_settings=&vk_app_id=51777387&vk_are_notifications_enabled=0&vk_is_app_user=1&vk_is_favorite=0&vk_language=ru&vk_platform=desktop_web&vk_ref=other&vk_ts=1701599146&vk_user_id=36039796&sign=zIJyvuNPxO1RNmilIvpihsgCqtHzb2vaEdokPdQAnt0';
 const param = window.location.search;
 
 const MAX_FILE_SIZE_MB = 10;
@@ -102,7 +99,7 @@ const CreateAvatar = () => {
         }
       } else {
         // Недопустимый формат изображения, выполните необходимые действия (покажите сообщение об ошибке, например)
-        console.error('Недопустимый формат изображения. Разрешены только JPEG, PNG и GIF.');
+        console.error('Недопустимый формат изображения. Разрешены только JPEG, PNG.');
 
         if (snackbar) return;
         setSnackbar(
@@ -110,7 +107,7 @@ const CreateAvatar = () => {
             before={<Icon28ErrorCircleOutline fill="var(--vkui--color_icon_negative)" />}
             onClose={() => setSnackbar(null)}
           >
-            Недопустимый формат изображения. Разрешены только JPEG, PNG и GIF.
+            Недопустимый формат изображения. Разрешены только JPEG, PNG.
           </Snackbar>,
         );
         setImageURI(null);
