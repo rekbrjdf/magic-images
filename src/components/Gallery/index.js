@@ -60,10 +60,11 @@ const Gallery = () => {
         const cart = `https://sonofleonid.ru/mini-app/static/${file}${param}`;
 
         return (
-          <Div key={id} style={{ width: '350px' }} className={classes.gallery__item}>
+          <Div key={id} style={{ maxWidth: '350px' }} className={classes.gallery__item}>
             <div
               style={{
-                width: '350px',
+                width: '100%',
+                maxWidth: '350px',
                 height: '350px',
                 backgroundImage: `url('https://sonofleonid.ru/mini-app/static/${file}${param}')`,
                 backgroundSize: 'contain',
@@ -87,7 +88,7 @@ const Gallery = () => {
               )}
             </Div> */}
 
-            <Div style={{ width: '100%' }}>
+            <Div style={{ width: 'auto', paddingLeft: '0', paddingRight: '0' }}>
               <ButtonGroup mode="horizontal" gap="m" stretched>
                 <Button size="l" onClick={() => handleDownload(file)} appearance="accent" stretched>
                   Скачать
