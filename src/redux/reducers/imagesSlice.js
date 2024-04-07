@@ -4,6 +4,7 @@ const initialState = {
   images: [],
   loading: false,
   error: null,
+  data: [],
 };
 
 const param = window.location.search;
@@ -42,6 +43,30 @@ export const deleteImage = createAsyncThunk('images/deleteImage', async (imageId
   }
 });
 
+export const uploadImages = createAsyncThunk(
+  'images/uploadImages',
+  async ({ formData, selectedCellId }) => {
+    try {
+      const response = await fetch(
+        `https://sonofleonid.ru/mini-app/api/upload${param}&prompt_id=${selectedCellId}`,
+        {
+          method: 'POST',
+          body: formData,
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP-ошибка! Статус: ${response.status}`);
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      throw new Error(`Ошибка при загрузке изображения: ${error.message}`);
+    }
+  },
+);
+
 const imagesSlice = createSlice({
   name: 'images',
   initialState,
@@ -70,6 +95,19 @@ const imagesSlice = createSlice({
       })
       .addCase(deleteImage.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(uploadImages.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(uploadImages.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+      })
+      .addCase(uploadImages.rejected, (state, action) => {
+        state.loading = false;
+        state.data = {};
         state.error = action.error.message;
       });
   },

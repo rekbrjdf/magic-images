@@ -32,6 +32,7 @@ import Template from '../../components/Template/index';
 import classes from './styles.module.scss';
 // import { set } from '../../store';
 import { ViewTypes, PanelTypes } from '../../routing/structure.ts';
+import { uploadImages } from '../../redux/reducers/imagesSlice';
 
 const param = window.location.search;
 
@@ -115,6 +116,16 @@ const CreateAvatar = () => {
     }
   };
 
+  // const handleDelete = async (imageId) => {
+  //   try {
+  //     await dispatch(deleteImage(imageId));
+  //     // После успешного удаления вызываем fetchImages() для обновления списка изображений
+  //     dispatch(fetchImages());
+  //   } catch (error) {
+  //     console.error('Ошибка при удалении изображения:', error);
+  //   }
+  // };
+
   const uploadImage = async (e) => {
     e.preventDefault();
 
@@ -128,20 +139,8 @@ const CreateAvatar = () => {
         formData.append(queryParams[i].key, queryParams[i].value);
       }
 
-      const response = await fetch(
-        `https://sonofleonid.ru/mini-app/api/upload${param}&prompt_id=${selectedCellId}`,
-        {
-          method: 'POST',
-          body: formData,
-        },
-      );
+      dispatch(uploadImages({ formData, selectedCellId }));
 
-      if (!response.ok) {
-        throw new Error(`HTTP-ошибка! Статус: ${response.status}`);
-      }
-
-      const result = await response.json();
-      console.log(result, 'Успех!');
       setSnackbar(true);
     } catch (error) {
       console.error('Ошибка при загрузке изображения:', error.message);

@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Div, ButtonGroup, Button, IconButton, PanelSpinner, Spinner } from '@vkontakte/vkui';
@@ -10,13 +11,14 @@ const param = window.location.search;
 const Gallery = () => {
   const dispatch = useDispatch();
   const { images, loading } = useSelector((state) => state.images);
+
+  const { data } = useSelector((state) => state.images);
+
   const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
     dispatch(fetchImages()); // Запрос на загрузку изображений при монтировании компонента
   }, [dispatch]);
-
-  console.log(images, 'images');
 
   const handleDownload = async (fileName) => {
     try {
@@ -56,52 +58,50 @@ const Gallery = () => {
 
   return (
     <div className={classes.gallery}>
-      {images.map(({ id, file }) => {
-        const cart = `https://sonofleonid.ru/mini-app/static/${file}${param}`;
+      {images.length > 1 ? (
+        images.map(({ id, file, is_init_img }) => {
+          const cart = `https://sonofleonid.ru/mini-app/static/${file}${param}`;
 
-        return (
-          <Div key={id} style={{ maxWidth: '350px' }} className={classes.gallery__item}>
-            <div
-              style={{
-                width: '100%',
-                maxWidth: '350px',
-                height: '350px',
-                backgroundImage: `url('https://sonofleonid.ru/mini-app/static/${file}${param}')`,
-                backgroundSize: 'contain',
-                backgroundRepeat: 'no-repeat',
-                backgroundPosition: 'center center',
-                borderRadius: '8px',
-                backgroundColor: 'transparent',
-              }}
-            />
-            {/* <Div style={{ width: '100%', height: 'auto' }}>
+          return (
+            <Div key={id} style={{ maxWidth: '350px' }} className={classes.gallery__item}>
+              <div
+                style={{
+                  width: '100%',
+                  maxWidth: '350px',
+                  height: '350px',
+                  backgroundImage: `url('https://sonofleonid.ru/mini-app/static/${file}${param}')`,
+                  backgroundSize: 'contain',
+                  backgroundRepeat: 'no-repeat',
+                  backgroundPosition: 'center center',
+                  borderRadius: '8px',
+                  backgroundColor: 'transparent',
+                  filter: !is_init_img ? '1' : 'blur(8px)',
+                }}
+              />
+              {!is_init_img && (
+                <Div style={{ width: 'auto', paddingLeft: '0', paddingRight: '0' }}>
+                  <ButtonGroup mode="horizontal" gap="m" stretched>
+                    <Button
+                      size="l"
+                      onClick={() => handleDownload(file)}
+                      appearance="accent"
+                      stretched
+                    >
+                      Скачать
+                    </Button>
 
-              {imageLoaded ? ( // Показываем картинку только после ее полной загрузки
-                <img
-                  style={{ width: '350px', height: '100%', borderRadius: '8px' }}
-                  src={cart}
-                  alt={`Image ${id}`}
-                  onLoad={handleImageLoad}
-                />
-              ) : (
-                <Spinner size="large" style={{ margin: '20px 0' }} />
+                    <IconButton onClick={() => handleDelete(id)}>
+                      <Icon16Delete />
+                    </IconButton>
+                  </ButtonGroup>
+                </Div>
               )}
-            </Div> */}
-
-            <Div style={{ width: 'auto', paddingLeft: '0', paddingRight: '0' }}>
-              <ButtonGroup mode="horizontal" gap="m" stretched>
-                <Button size="l" onClick={() => handleDownload(file)} appearance="accent" stretched>
-                  Скачать
-                </Button>
-
-                <IconButton onClick={() => handleDelete(id)}>
-                  <Icon16Delete />
-                </IconButton>
-              </ButtonGroup>
             </Div>
-          </Div>
-        );
-      })}
+          );
+        })
+      ) : (
+        <Div>У вас пока нет загруженных аватарок</Div>
+      )}
     </div>
   );
 };
