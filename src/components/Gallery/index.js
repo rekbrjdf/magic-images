@@ -10,16 +10,20 @@ const param = window.location.search;
 
 const Gallery = () => {
   const dispatch = useDispatch();
-  const { images, loading } = useSelector((state) => state.images);
+  const { images, loading, data, taskStatus } = useSelector((state) => state.images);
+  // const [imageStatus, setImageStatus] = useState({}); // Статус задачи для каждого изображения
 
-  const { data } = useSelector((state) => state.images);
+  console.log(data, 'data');
+  console.log(images, 'images');
 
-  const [imageLoaded, setImageLoaded] = useState(false);
+  console.log(taskStatus, 'taskStatus');
 
+  // Запрос на загрузку изображений при монтировании компонента
   useEffect(() => {
-    dispatch(fetchImages()); // Запрос на загрузку изображений при монтировании компонента
+    dispatch(fetchImages());
   }, [dispatch]);
 
+  // Функция для загрузки изображения
   const handleDownload = async (fileName) => {
     try {
       const response = await fetch(`https://sonofleonid.ru/mini-app/static/${fileName}${param}`);
@@ -28,8 +32,7 @@ const Gallery = () => {
       // Создаем ссылку для скачивания
       const link = document.createElement('a');
       link.href = window.URL.createObjectURL(blob);
-      link.download = fileName; // Имя файла, которое будет использоваться при скачивании
-
+      link.download = fileName;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -38,6 +41,7 @@ const Gallery = () => {
     }
   };
 
+  // Функция для удаления изображения
   const handleDelete = async (imageId) => {
     try {
       await dispatch(deleteImage(imageId));
@@ -48,10 +52,7 @@ const Gallery = () => {
     }
   };
 
-  const handleImageLoad = () => {
-    setImageLoaded(true); // Устанавливаем состояние загрузки картинки в true после ее загрузки
-  };
-
+  // Отображение
   if (loading) {
     return <PanelSpinner size="large" className={classes.gallery__spinner} state="cancelable" />;
   }
@@ -60,8 +61,9 @@ const Gallery = () => {
     <div className={classes.gallery}>
       {images.length > 1 ? (
         images.map(({ id, file, is_init_img }) => {
-          const cart = `https://sonofleonid.ru/mini-app/static/${file}${param}`;
-
+          const imageUrl = `https://sonofleonid.ru/mini-app/static/${file}${param}`;
+          // const status = imageStatus[id];
+          // console.log(status, 'status component');
           return (
             <Div key={id} style={{ maxWidth: '350px' }} className={classes.gallery__item}>
               <div
@@ -69,13 +71,13 @@ const Gallery = () => {
                   width: '100%',
                   maxWidth: '350px',
                   height: '350px',
-                  backgroundImage: `url('https://sonofleonid.ru/mini-app/static/${file}${param}')`,
+                  backgroundImage: `url('${imageUrl}')`,
                   backgroundSize: 'contain',
                   backgroundRepeat: 'no-repeat',
                   backgroundPosition: 'center center',
                   borderRadius: '8px',
                   backgroundColor: 'transparent',
-                  filter: !is_init_img ? '1' : 'blur(8px)',
+                  filter: is_init_img ? 'blur(8px)' : 'none',
                 }}
               />
               {!is_init_img && (
@@ -89,18 +91,36 @@ const Gallery = () => {
                     >
                       Скачать
                     </Button>
-
                     <IconButton onClick={() => handleDelete(id)}>
                       <Icon16Delete />
                     </IconButton>
                   </ButtonGroup>
                 </Div>
               )}
+              {/* Логика отображения статуса */}
+              {/* {status === 'success' && (
+                <Div style={{ width: 'auto', color: 'red' }} className={classes.gallery__status}>
+                  Статус: Выполнено
+                </Div>
+              )}
+              {status === 'error' && (
+                <Div style={{ width: 'auto', color: 'red' }} className={classes.gallery__status}>
+                  Статус: Ошибка
+                  <IconButton onClick={() => handleDelete(id)}>
+                    <Icon16Delete />
+                  </IconButton>
+                </Div>
+              )}
+              {status === 'pending' && (
+                <Div style={{ width: 'auto', color: 'red' }} className={classes.gallery__status}>
+                  Статус: Выполняется...
+                </Div>
+              )} */}
             </Div>
           );
         })
       ) : (
-        <Div>У вас пока нет загруженных аватарок</Div>
+        <Div>У вас пока нет загруженных изображений</Div>
       )}
     </div>
   );
