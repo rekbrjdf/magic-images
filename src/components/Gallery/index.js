@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Div, ButtonGroup, Button, IconButton, PanelSpinner, Spinner } from '@vkontakte/vkui';
+import { Div, ButtonGroup, Button, IconButton, PanelSpinner, ContentCard } from '@vkontakte/vkui';
 import { Icon16Delete } from '@vkontakte/icons';
 import { fetchImages, deleteImage } from '../../redux/reducers/imagesSlice'; // Подставьте путь к вашим actions
 import classes from './styles.module.scss';
@@ -11,17 +11,11 @@ const param = window.location.search;
 const Gallery = () => {
   const dispatch = useDispatch();
   const { images, loading, data, taskStatus } = useSelector((state) => state.images);
-  // const [imageStatus, setImageStatus] = useState({}); // Статус задачи для каждого изображения
-
-  console.log(data, 'data');
-  console.log(images, 'images');
-
-  console.log(taskStatus, 'taskStatus');
 
   // Запрос на загрузку изображений при монтировании компонента
   useEffect(() => {
     dispatch(fetchImages());
-  }, [dispatch]);
+  }, [dispatch, taskStatus]);
 
   // Функция для загрузки изображения
   const handleDownload = async (fileName) => {
@@ -59,11 +53,10 @@ const Gallery = () => {
 
   return (
     <div className={classes.gallery}>
-      {images.length > 1 ? (
-        images.map(({ id, file, is_init_img }) => {
+      {images.length > 0 ? (
+        images.map(({ id, file, status }) => {
           const imageUrl = `https://sonofleonid.ru/mini-app/static/${file}${param}`;
-          // const status = imageStatus[id];
-          // console.log(status, 'status component');
+
           return (
             <Div key={id} style={{ maxWidth: '350px' }} className={classes.gallery__item}>
               <div
@@ -77,10 +70,10 @@ const Gallery = () => {
                   backgroundPosition: 'center center',
                   borderRadius: '8px',
                   backgroundColor: 'transparent',
-                  filter: is_init_img ? 'blur(8px)' : 'none',
+                  filter: status === 'init' || status === 'error' ? 'blur(8px)' : 'none',
                 }}
               />
-              {!is_init_img && (
+              {status === 'success' && (
                 <Div style={{ width: 'auto', paddingLeft: '0', paddingRight: '0' }}>
                   <ButtonGroup mode="horizontal" gap="m" stretched>
                     <Button
@@ -97,25 +90,31 @@ const Gallery = () => {
                   </ButtonGroup>
                 </Div>
               )}
-              {/* Логика отображения статуса */}
-              {/* {status === 'success' && (
-                <Div style={{ width: 'auto', color: 'red' }} className={classes.gallery__status}>
-                  Статус: Выполнено
-                </Div>
-              )}
+
               {status === 'error' && (
-                <Div style={{ width: 'auto', color: 'red' }} className={classes.gallery__status}>
-                  Статус: Ошибка
-                  <IconButton onClick={() => handleDelete(id)}>
-                    <Icon16Delete />
-                  </IconButton>
+                <Div className={classes.gallery__status}>
+                  <ContentCard
+                    header={
+                      <div className={classes['gallery__status-item']}>
+                        <div> Ошибка</div>
+                        <IconButton onClick={() => handleDelete(id)}>
+                          <Icon16Delete />
+                        </IconButton>
+                      </div>
+                    }
+                    mode="tint"
+                  />
                 </Div>
               )}
-              {status === 'pending' && (
-                <Div style={{ width: 'auto', color: 'red' }} className={classes.gallery__status}>
-                  Статус: Выполняется...
+              {status === 'init' && (
+                <Div className={classes.gallery__status}>
+                  <PanelSpinner
+                    size="large"
+                    className={classes.gallery__spinner}
+                    state="cancelable"
+                  />
                 </Div>
-              )} */}
+              )}
             </Div>
           );
         })
