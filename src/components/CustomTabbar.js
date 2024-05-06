@@ -34,7 +34,7 @@ const CustomTabbar = ({ router }) => {
         <Icon28ServicesOutline />
       </TabbarItem>
 
-      <TabbarItem
+      {/* <TabbarItem
         onClick={() => toView(ViewTypes.PROFILE)}
         selected={router.activeView === ViewTypes.PROFILE}
         data-story="profile"
@@ -42,7 +42,7 @@ const CustomTabbar = ({ router }) => {
         text="Профиль"
       >
         <Icon28UserCircleOutline />
-      </TabbarItem>
+      </TabbarItem> */}
     </Tabbar>
   );
 };

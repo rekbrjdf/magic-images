@@ -242,7 +242,7 @@ const App = ({ router }) => {
                       Создать аватар
                     </Cell>
 
-                    <Cell
+                    {/* <Cell
                       disabled={activeView === 'PROFILE'}
                       style={activeView === 'PROFILE' ? activeStoryStyles : undefined}
                       data-story="PROFILE"
@@ -250,7 +250,7 @@ const App = ({ router }) => {
                       before={<Icon28UserCircleOutline />}
                     >
                       Профиль
-                    </Cell>
+                    </Cell> */}
                   </Group>
                 </Panel>
               </SplitCol>
