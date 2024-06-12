@@ -5,6 +5,9 @@ import imgHh from '../../res/image/logo_hh.png';
 import imgOp from '../../res/image/logo_op.png';
 import imgArcane from '../../res/image/logo_arcane.png';
 import imgCyberpunk from '../../res/image/logo_cyberpunk.png';
+import imgTarot from '../../res/image/tarot.jpg';
+import imgBlindbox from '../../res/image/blimdbox.jpg';
+import imgYae from '../../res/image/YaeMiko.jpg';
 
 const items = [
   {
@@ -36,6 +39,24 @@ const items = [
     title: 'Киберпанк',
     price: 64,
     image: imgCyberpunk,
+  },
+  {
+    id: 3,
+    title: 'Tarot Card Style',
+    price: 64,
+    image: imgTarot,
+  },
+  {
+    id: 7,
+    title: 'Blindbox',
+    price: 64,
+    image: imgBlindbox,
+  },
+  {
+    id: 8,
+    title: 'Yae Miko Genshin',
+    price: 64,
+    image: imgYae,
   },
 ];
 

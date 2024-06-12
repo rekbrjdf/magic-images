@@ -21,6 +21,7 @@ import {
   Avatar,
   Button,
   Div,
+  Link,
   SimpleCell,
   Switch,
   CardGrid,
@@ -272,6 +273,13 @@ const App = ({ router }) => {
                       Мои аватары
                     </PanelHeader>
                     <Group style={{ height: '700px' }}>
+                      <Card>
+                        <div style={{ padding: '15px 20px' }}>
+                          Для получения уведомлений о завершении генераций, напишите
+                          &lsquo;Начать&lsquo; в диалог с группой -{' '}
+                          <Link href="https://vk.me/club22352015">https://vk.me/club22352015</Link>
+                        </div>
+                      </Card>
                       <Gallery />
                     </Group>
                   </Panel>
