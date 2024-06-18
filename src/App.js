@@ -277,7 +277,9 @@ const App = ({ router }) => {
                         <div style={{ padding: '15px 20px' }}>
                           Для получения уведомлений о завершении генераций, напишите
                           &lsquo;Начать&lsquo; в диалог с группой -{' '}
-                          <Link href="https://vk.me/club22352015">https://vk.me/club22352015</Link>
+                          <Link target="_blank" rel="noreferrer" href="https://vk.me/club223520151">
+                            https://vk.me/club223520151
+                          </Link>
                         </div>
                       </Card>
                       <Gallery />
